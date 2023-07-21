@@ -1,0 +1,127 @@
+# This file is part of Extractor_Markup.
+
+# Extractor_Markup is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Extractor_Markup is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Extractor_Markup.  If not, see <http://www.gnu.org/licenses/>.
+
+# see link below for make file dependency magic
+#
+# http://bruno.defraine.net/techtips/makefile-auto-dependencies-with-gcc/
+#
+MAKE=gmake
+
+CPP := $(GCCDIR)/bin/g++
+
+UTILITYDIR := ${HOME}/projects/PF_Project/common_utilities
+
+PYBIND11INC := $(shell python3 -m pybind11 --includes)
+EXTSUFFIX := $(shell python3-config --extension-suffix)
+
+# echo $(PYBIND11INC)
+# echo $(EXTSUFFIX)
+
+RPATH_LIB := -Wl,-rpath,$(GCCDIR)/lib64 -Wl,-rpath,$(BOOSTDIR)/lib -Wl,-rpath,/usr/local/lib
+
+# If no configuration is specified, "Debug" will be used
+ifndef "CFG"
+	CFG := Debug
+endif
+
+#	common definitions
+
+OUTFILE := PY_PF_Chart$(EXTSUFFIX)
+
+CFG_INC := $(PYBIND11INC) \
+	-I$(UTILITYDIR)/include \
+	-I${HOME}/projects/PF_Project/point_figure/src
+
+SDIR1 := .
+SRCS1 := $(SDIR1)/PY_PF_Chart.cpp
+
+
+# SRCS := $(SRCS2) $(SRCS4)
+#
+VPATH := $(SDIR1)
+
+CFG_LIB := -L../lib_PF_Chart \
+		-lPF_Chart \
+		-L/usr/local/lib \
+		-ldate-tz \
+		-lspdlog \
+		-lpqxx \
+		-lpq \
+		-L/usr/lib \
+		-lfmt \
+		-lmpdec++ \
+		-lmpdec \
+		-ljsoncpp \
+		-L$(GCCDIR)/lib64 \
+		-L$(BOOSTDIR)/lib 
+
+OBJS1=$(addprefix $(OUTDIR)/, $(addsuffix .o, $(basename $(notdir $(SRCS1)))))
+
+OBJS=$(OBJS1)
+
+DEPS=$(OBJS:.o=.d)
+
+#
+# Configuration: Debug
+#
+ifeq "$(CFG)" "Debug"
+
+OUTDIR=Debug_ext
+
+COMPILE=$(CPP) -c  -x c++  -O0  -g3 -std=c++2b -D_DEBUG -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
+
+LINK := $(CPP) -shared -g -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
+
+endif #	DEBUG configuration
+
+#
+# Configuration: Release
+#
+ifeq "$(CFG)" "Release"
+
+OUTDIR=Release_ext
+
+COMPILE=$(CPP) -c  -x c++  -O3 -std=c++2b -flto -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
+
+LINK := $(CPP) -shared -flto=auto -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
+
+endif #	RELEASE configuration
+
+# Build rules
+all: $(OUTFILE)
+
+$(OUTDIR)/%.o : %.cpp 
+	$(COMPILE)
+
+$(OUTFILE): $(OUTDIR) $(OBJS)
+	$(LINK)
+
+-include $(DEPS)
+
+$(OUTDIR):
+	mkdir -p "$(OUTDIR)"
+
+# Rebuild this project
+rebuild: cleanall all
+
+# Clean this project
+clean:
+	rm -f $(OUTFILE)
+	rm -f $(OBJS)
+	rm -f $(OUTDIR)/*.d
+	rm -f $(OUTDIR)/*.o
+
+# Clean this project and all dependencies
+cleanall: clean
