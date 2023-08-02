@@ -14,66 +14,13 @@
 //
 // =====================================================================================
 //
-/* from https://stackoverflow.com/questions/70528027/how-to-check-if-a-pyobject-isinstance-of-python-decimal-decimal-in-pybind11-wi
-*
-*
-#include <pybind11/embed.h>
-#include <iostream>
-#include <typeinfo>
 
-namespace py = pybind11;
-
-int main() {
-    py::scoped_interpreter python;
-    py::object Decimal = py::module_::import("decimal").attr("Decimal");
-    py::object pi = Decimal("3.14159");
-    if (typeid(pi) == typeid(Decimal)) {
-        std::cout << "pi is an instance of Decimal\n";
-    } else {
-        std::cout << "pi is not an instance of Decimal\n";
-    }
-}
-
-#include <pybind11/embed.h>
-#include <iostream>
-#include <typeinfo>
-
-using namespace pybind11::literals; // to bring in the `_a` literal
-namespace py = pybind11;
-
-int main() {
-    py::scoped_interpreter python;
-    py::object Decimal = py::module_::import("decimal").attr("Decimal");
-    py::object pi = Decimal("3.14159");
-    if (typeid(pi) == typeid(Decimal)) {
-        std::cout << "pi is an instance of Decimal with typeid\n";
-    } else {
-        std::cout << "pi is not an instance of Decimal\n";
-    }
-    py::dict d("spam"_a=py::none(), "eggs"_a=42);
-    
-    if (!(typeid(d) == typeid(Decimal))) {
-        std::cout << "d is not an instance of Decimal with typeid\n";
-    }
-
-    if (py::isinstance(pi, Decimal)) {
-        std::cout << "pi is an instance of Decimal with py::isinstance \n";
-    }
-    if (!py::isinstance(d, Decimal)) {
-        std::cout << "d is not an instance of Decimal with py::isinstance\n";
-    }
-}
-*
-*
-*/
-
-
-#include "utilities.h"
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 #include "PF_Chart.h"
+#include "utilities.h"
 
 PYBIND11_MODULE(PY_PF_Chart, m) {
     py::class_<PF_Column> PF_Col(m, "PY_PF_Column");
