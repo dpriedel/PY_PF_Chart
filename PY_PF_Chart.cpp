@@ -37,8 +37,7 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
     py::enum_<PF_SignalCategory>(m, "PF_SignalCategory")
         .value("e_Unknown", PF_SignalCategory::e_Unknown)
         .value("e_PF_Buy", PF_SignalCategory::e_PF_Buy)
-        .value("e_PF_Sell", PF_SignalCategory::e_PF_Sell)
-        .export_values();
+        .value("e_PF_Sell", PF_SignalCategory::e_PF_Sell);
     
     py::enum_<PF_SignalType>(m, "PF_SignalType")
         .value("e_Unknown", PF_SignalType::e_Unknown)
@@ -51,8 +50,7 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
         .value("e_Catapult_Buy", PF_SignalType::e_Catapult_Buy)
         .value("e_Catapult_Sell", PF_SignalType::e_Catapult_Sell)
         .value("e_TTop_Catapult_Buy", PF_SignalType::e_TTop_Catapult_Buy)
-        .value("e_TBottom_Catapult_Sell", PF_SignalType::e_TBottom_Catapult_Sell)
-        .export_values();
+        .value("e_TBottom_Catapult_Sell", PF_SignalType::e_TBottom_Catapult_Sell);
 
     py::enum_<PF_SignalPriority>(m, "PF_SignalPriority")
         .value("e_Unknown", PF_SignalPriority::e_Unknown)
@@ -65,8 +63,7 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
         .value("e_Catapult_Buy", PF_SignalPriority::e_Catapult_Buy)
         .value("e_Catapult_Sell", PF_SignalPriority::e_Catapult_Sell)
         .value("e_TTop_Catapult_Buy", PF_SignalPriority::e_TTop_Catapult_Buy)
-        .value("e_TBottom_Catapult_Sell", PF_SignalPriority::e_TBottom_Catapult_Sell)
-        .export_values();
+        .value("e_TBottom_Catapult_Sell", PF_SignalPriority::e_TBottom_Catapult_Sell);
 
     py::class_<PF_Signal> (m, "PF_Signal")
         .def(py::init())
