@@ -80,9 +80,9 @@ ifeq "$(CFG)" "Debug"
 
 OUTDIR=Debug_ext
 
-COMPILE=$(CPP) -c  -x c++  -O0  -g3 -std=c++2b -D_DEBUG -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
+COMPILE=$(CPP) -c  -x c++  -O0  -g3 -std=c++2b -flto -D_DEBUG -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
 
-LINK := $(CPP) -shared -g -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
+LINK := $(CPP) -shared -g -flto=auto -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
 
 endif #	DEBUG configuration
 
