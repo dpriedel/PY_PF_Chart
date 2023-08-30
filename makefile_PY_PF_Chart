@@ -57,10 +57,10 @@ CFG_LIB := -L../lib_PF_Chart \
 		-L/usr/local/lib \
 		-ldate-tz \
 		-lspdlog \
+		-lfmt \
 		-lpqxx \
 		-lpq \
 		-L/usr/lib \
-		-lfmt \
 		-lmpdec++ \
 		-lmpdec \
 		-ljsoncpp \
