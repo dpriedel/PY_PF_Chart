@@ -17,6 +17,7 @@
 
 #include <format>
 #include <pybind11/pybind11.h>
+#include <pybind11/operators.h>
 #include <pybind11/stl.h>
 // #include <pybind11/options.h>
 
@@ -71,7 +72,9 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
         .def_readonly("signal_type_", &PF_Signal::signal_type_)
         .def_readonly("signal_priority_", &PF_Signal::priority_)
         .def("GetSignalPrice", [](const PF_Signal& sig) { return sig.signal_price_.format("f"); }); 
-    
+
+    m.def("CmpSigPriority", &CmpSigPriority, "Compare 2 signal priorities");
+
     py::class_<PF_Column> PF_Col(m, "PY_PF_Column");
 
     PF_Col.def(py::init());
@@ -89,7 +92,8 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
 
     py::class_<PF_Chart>(m, "PY_PF_Chart")
         .def(py::init())
-        .def(py::init([] (const std::string& symbol, const std::string_view box_size, int32_t reversals){ return PF_Chart{symbol, sv2dec(box_size), reversals}; }))
+        .def(py::init([] (const std::string& symbol, std::string_view range_or_ATR, int32_t reversals){ return PF_Chart{symbol, sv2dec(range_or_ATR), reversals}; }))
+        .def(py::init([] (const std::string& symbol, std::string_view range_or_ATR, int32_t reversals, std::string_view modifier){ return PF_Chart{symbol, sv2dec(range_or_ATR), reversals, sv2dec(modifier)}; }))
         .def("__str__", [](const PF_Chart& c) { return std::format("{}\n", c); })
         .def("empty", &PF_Chart::empty, "Is chart empty")
         .def("GetBoxSize", [](const PF_Chart& a) { return a.GetChartBoxSize().format("f"); }, "Chart box size")
