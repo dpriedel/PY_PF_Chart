@@ -101,6 +101,7 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
         .def("GetSymbol", &PF_Chart::GetSymbol)
         .def("GetCurrentDirection", &PF_Chart::GetCurrentDirection, "Chart is moving up/down/unknown")
         .def("AddValue", py::overload_cast<std::string_view, std::string_view, std::string_view>(&PF_Chart::AddValue), "Add new value: new value, time, time format")
+        .def("AddValue", py::overload_cast<double, int64_t>(&PF_Chart::AddValue), "Add new value: new value, time, time format")
         .def("GetMostRecentSignal", &PF_Chart::GetMostRecentSignal)
         .def("LoadDataFromFile", &PF_Chart::LoadDataFromFile);
 }
