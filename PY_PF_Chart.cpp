@@ -36,35 +36,35 @@ PYBIND11_MODULE(PY_PF_Chart, m) {
     py::implicitly_convertible<std::string, std::filesystem::path>();
 
     py::enum_<PF_SignalCategory>(m, "PF_SignalCategory")
-        .value("e_Unknown", PF_SignalCategory::e_Unknown)
+        .value("e_Unknown", PF_SignalCategory::e_unknown)
         .value("e_PF_Buy", PF_SignalCategory::e_PF_Buy)
         .value("e_PF_Sell", PF_SignalCategory::e_PF_Sell);
     
     py::enum_<PF_SignalType>(m, "PF_SignalType")
-        .value("e_Unknown", PF_SignalType::e_Unknown)
-        .value("e_DoubleTop_Buy", PF_SignalType::e_DoubleTop_Buy)
-        .value("e_DoubleBottom_Sell", PF_SignalType::e_DoubleBottom_Sell)
-        .value("e_TripleTop_Buy", PF_SignalType::e_TripleTop_Buy)
-        .value("e_TripleBottom_Sell", PF_SignalType::e_TripleBottom_Sell)
-        .value("e_Bullish_TT_Buy", PF_SignalType::e_Bullish_TT_Buy)
-        .value("e_Bearish_TB_Sell", PF_SignalType::e_Bearish_TB_Sell)
-        .value("e_Catapult_Buy", PF_SignalType::e_Catapult_Buy)
-        .value("e_Catapult_Sell", PF_SignalType::e_Catapult_Sell)
-        .value("e_TTop_Catapult_Buy", PF_SignalType::e_TTop_Catapult_Buy)
-        .value("e_TBottom_Catapult_Sell", PF_SignalType::e_TBottom_Catapult_Sell);
+        .value("e_Unknown", PF_SignalType::e_unknown)
+        .value("e_DoubleTop_Buy", PF_SignalType::e_double_top_buy)
+        .value("e_DoubleBottom_Sell", PF_SignalType::e_double_bottom_sell)
+        .value("e_TripleTop_Buy", PF_SignalType::e_triple_top_buy)
+        .value("e_TripleBottom_Sell", PF_SignalType::e_triple_bottom_sell)
+        .value("e_Bullish_TT_Buy", PF_SignalType::e_bullish_tt_buy)
+        .value("e_Bearish_TB_Sell", PF_SignalType::e_bearish_tb_sell)
+        .value("e_Catapult_Buy", PF_SignalType::e_catapult_buy)
+        .value("e_Catapult_Sell", PF_SignalType::e_catapult_sell)
+        .value("e_TTop_Catapult_Buy", PF_SignalType::e_ttop_catapult_buy)
+        .value("e_TBottom_Catapult_Sell", PF_SignalType::e_tbottom_catapult_sell);
 
     py::enum_<PF_SignalPriority>(m, "PF_SignalPriority")
-        .value("e_Unknown", PF_SignalPriority::e_Unknown)
-        .value("e_DoubleTop_Buy", PF_SignalPriority::e_DoubleTop_Buy)
-        .value("e_DoubleBottom_Sell", PF_SignalPriority::e_DoubleBottom_Sell)
-        .value("e_TripleTop_Buy", PF_SignalPriority::e_TripleTop_Buy)
-        .value("e_TripleBottom_Sell", PF_SignalPriority::e_TripleBottom_Sell)
-        .value("e_Bullish_TT_Buy", PF_SignalPriority::e_Bullish_TT_Buy)
-        .value("e_Bearish_TB_Sell", PF_SignalPriority::e_Bearish_TB_Sell)
-        .value("e_Catapult_Buy", PF_SignalPriority::e_Catapult_Buy)
-        .value("e_Catapult_Sell", PF_SignalPriority::e_Catapult_Sell)
-        .value("e_TTop_Catapult_Buy", PF_SignalPriority::e_TTop_Catapult_Buy)
-        .value("e_TBottom_Catapult_Sell", PF_SignalPriority::e_TBottom_Catapult_Sell);
+        .value("e_Unknown", PF_SignalPriority::e_unknown)
+        .value("e_DoubleTop_Buy", PF_SignalPriority::e_double_top_buy)
+        .value("e_DoubleBottom_Sell", PF_SignalPriority::e_double_bottom_sell)
+        .value("e_TripleTop_Buy", PF_SignalPriority::e_triple_top_buy)
+        .value("e_TripleBottom_Sell", PF_SignalPriority::e_triple_bottom_sell)
+        .value("e_Bullish_TT_Buy", PF_SignalPriority::e_bullish_tt_buy)
+        .value("e_Bearish_TB_Sell", PF_SignalPriority::e_bearish_tb_sell)
+        .value("e_Catapult_Buy", PF_SignalPriority::e_catapult_buy)
+        .value("e_Catapult_Sell", PF_SignalPriority::e_catapult_sell)
+        .value("e_TTop_Catapult_Buy", PF_SignalPriority::e_ttop_catapult_buy)
+        .value("e_TBottom_Catapult_Sell", PF_SignalPriority::e_tbottom_catapult_sell);
 
     py::class_<PF_Signal> (m, "PF_Signal")
         .def(py::init())
