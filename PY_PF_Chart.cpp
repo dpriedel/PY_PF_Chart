@@ -23,7 +23,9 @@
 
 namespace py = pybind11;
 
+#include "Boxes.h"
 #include "PF_Chart.h"
+#include "PF_Signals.h"
 #include "utilities.h"
 
 PYBIND11_MODULE(PY_PF_Chart, m)
@@ -34,6 +36,8 @@ PYBIND11_MODULE(PY_PF_Chart, m)
 
     py::class_<std::filesystem::path>(m, "Path").def(py::init<std::string>());
     py::implicitly_convertible<std::string, std::filesystem::path>();
+
+    py::enum_<BoxScale>(m, "BoxScale").value("e_linear", BoxScale::e_Linear).value("e_percent", BoxScale::e_Percent);
 
     py::enum_<PF_SignalCategory>(m, "PF_SignalCategory")
         .value("e_Unknown", PF_SignalCategory::e_unknown)
@@ -97,8 +101,9 @@ PYBIND11_MODULE(PY_PF_Chart, m)
                 return PF_Chart{symbol, sv2dec(range_or_ATR), reversals};
             }))
         .def(py::init(
-            [](const std::string& symbol, std::string_view range_or_ATR, int32_t reversals, std::string_view modifier) {
-                return PF_Chart{symbol, sv2dec(range_or_ATR), reversals, sv2dec(modifier)};
+            [](const std::string& symbol, std::string_view range_or_ATR, int32_t reversals, std::string_view modifier,
+               BoxScale boxscale) {
+                return PF_Chart{symbol, sv2dec(range_or_ATR), reversals, sv2dec(modifier), boxscale};
             }))
         .def("__str__", [](const PF_Chart& c) { return std::format("{}\n", c); })
         .def("empty", &PF_Chart::empty, "Is chart empty")
@@ -116,5 +121,5 @@ PYBIND11_MODULE(PY_PF_Chart, m)
 }
 
 // PF_Chart(std::string symbol, decimal::Decimal base_box_size, int32_t reversal_boxes,
-//         Boxes::BoxScale box_scale=Boxes::BoxScale::e_Linear,
+//         BoxScale box_scale=BoxScale::e_Linear,
 //         decimal::Decimal box_size_modifier=0, int64_t max_columns_for_graph=0);
