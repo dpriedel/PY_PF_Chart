@@ -19,7 +19,14 @@
 #
 MAKE=gmake
 
+MAKE=gmake
+
+BOOSTDIR := /extra/boost/boost-1.83_gcc-13
+GCCDIR := /extra/gcc/gcc-13
+GTESTDIR := /usr/local/include
+UTILITYDIR := ${HOME}/projects/PF_Project/common_utilities
 CPP := $(GCCDIR)/bin/g++
+GCC := $(GCCDIR)/bin/gcc
 
 UTILITYDIR := ${HOME}/projects/PF_Project/common_utilities
 
@@ -94,18 +101,20 @@ ifeq "$(CFG)" "Release"
 OUTDIR=Release_ext
 
 COMPILE=$(CPP) -c  -x c++  -O3 -std=c++2b -flto -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
+# COMPILE=$(CPP) -c  -x c++  -O3 -std=c++2b -fPIC -o $@ $(CFG_INC) $< -march=native -MMD -MP
 
 LINK := $(CPP) -shared -flto=auto -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
+# LINK := $(CPP) -shared -o $(OUTFILE) $(OBJS) $(CFG_LIB) -Wl,-E $(RPATH_LIB)
 
 endif #	RELEASE configuration
 
 # Build rules
 all: $(OUTFILE)
 
-$(OUTDIR)/%.o : %.cpp 
+$(OUTDIR)/%.o : %.cpp
 	$(COMPILE)
 
-$(OUTFILE): $(OUTDIR) $(OBJS)
+$(OUTFILE): $(OUTDIR) $(OBJS) ../lib_PF_Chart/libPF_Chart.a
 	$(LINK)
 
 -include $(DEPS)
