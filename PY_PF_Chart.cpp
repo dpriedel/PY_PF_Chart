@@ -105,6 +105,7 @@ PYBIND11_MODULE(PY_PF_Chart, m)
                BoxScale boxscale) {
                 return PF_Chart{symbol, sv2dec(range_or_ATR), reversals, sv2dec(modifier), boxscale};
             }))
+        .def("MakeChartFromJSONFile", &PF_Chart::MakeChartFromJSONFile, "Construct a chart from saved PF_Chart data")
         .def("__str__", [](const PF_Chart& c) { return std::format("{}\n", c); })
         .def("empty", &PF_Chart::empty, "Is chart empty")
         .def(
