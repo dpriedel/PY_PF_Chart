@@ -30,8 +30,8 @@ GCC := $(GCCDIR)/bin/gcc
 
 UTILITYDIR := ${HOME}/projects/PF_Project/common_utilities
 
-PYBIND11INC := $(shell python3 -m pybind11 --includes)
-EXTSUFFIX := $(shell python3-config --extension-suffix)
+PYBIND11INC := $(shell /usr/local/python-3.12/bin/python3 -m pybind11 --includes)
+EXTSUFFIX := $(shell /usr/local/python-3.12/bin/python3-config --extension-suffix)
 
 # echo $(PYBIND11INC)
 # echo $(EXTSUFFIX)
