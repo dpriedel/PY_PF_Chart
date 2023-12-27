@@ -70,6 +70,12 @@ PYBIND11_MODULE(PY_PF_Chart, m)
         .value("e_ttop_catapult_buy", PF_SignalPriority::e_ttop_catapult_buy)
         .value("e_tbottom_catapult_sell", PF_SignalPriority::e_tbottom_catapult_sell);
 
+    py::enum_<PF_ColumnFilter>(m, "PF_ColumnFilter")
+        .value("e_up_column", PF_ColumnFilter::e_up_column)
+        .value("e_down_column", PF_ColumnFilter::e_down_column)
+        .value("e_reversed_to_up", PF_ColumnFilter::e_reversed_to_up)
+        .value("e_reversed_to_down", PF_ColumnFilter::e_reversed_to_down);
+
     py::class_<PF_Signal>(m, "PF_Signal")
         .def(py::init())
         .def_readonly("signal_category_", &PF_Signal::signal_category_)
@@ -118,7 +124,8 @@ PYBIND11_MODULE(PY_PF_Chart, m)
         .def("AddValue", py::overload_cast<double, int64_t>(&PF_Chart::AddValue),
              "Add new value: new value, time, time format")
         .def("GetMostRecentSignal", &PF_Chart::GetMostRecentSignal)
-        .def("LoadDataFromFile", &PF_Chart::LoadDataFromFile);
+        .def("LoadDataFromFile", &PF_Chart::LoadDataFromFile)
+        .def("GetBoxesForColumns", &PF_Chart::GetBoxesForColumns, py::return_value_policy::take_ownership);
 }
 
 // PF_Chart(std::string symbol, decimal::Decimal base_box_size, int32_t reversal_boxes,
