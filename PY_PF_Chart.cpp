@@ -18,6 +18,7 @@
 #include <format>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/chrono.h>
 #include <pybind11/stl.h>
 // #include <pybind11/options.h>
 
@@ -25,6 +26,7 @@ namespace py = pybind11;
 
 #include "Boxes.h"
 #include "PF_Chart.h"
+#include "PF_Column.h"
 #include "PF_Signals.h"
 #include "utilities.h"
 
@@ -81,13 +83,15 @@ PYBIND11_MODULE(PY_PF_Chart, m)
         .def_readonly("signal_category_", &PF_Signal::signal_category_)
         .def_readonly("signal_type_", &PF_Signal::signal_type_)
         .def_readonly("signal_priority_", &PF_Signal::priority_)
-        .def("GetSignalPrice", [](const PF_Signal& sig) { return sig.signal_price_.format("f"); });
+        .def_readonly("signal_column_", &PF_Signal::column_number_)
+        .def("GetSignalTimeSecs", [](const PF_Signal& sig) { return std::chrono::time_point_cast<std::chrono::seconds>(sig.tpt_); })
+        .def("GetSignalPrice", [](const PF_Signal& sig) { return dec2dbl(sig.signal_price_); })
+        .def("GetSignalBox", [](const PF_Signal& sig) { return dec2dbl(sig.box_); });
 
     m.def("CmpSigPriority", &CmpSigPriority, "Compare 2 signal priorities");
+    m.def("CmpSignalsByPriority", &CmpSignalsByPriority, "Compare 2 signal priorities");
 
     py::class_<PF_Column> PF_Col(m, "PY_PF_Column");
-
-    PF_Col.def(py::init());
 
     py::enum_<PF_Column::Direction>(PF_Col, "Direction")
         .value("e_Unknown", PF_Column::Direction::e_Unknown)
@@ -100,6 +104,12 @@ PYBIND11_MODULE(PY_PF_Chart, m)
         .value("e_Reversal", PF_Column::Status::e_Reversal)
         .value("e_AcceptedWithSignal", PF_Column::Status::e_AcceptedWithSignal);
 
+    PF_Col.def(py::init())
+        .def("GetColumnBeginTime", [](const PF_Column& c) { return std::chrono::time_point_cast<std::chrono::seconds>(c.GetTimeSpan().first); })
+        .def("GetColumnTop", &PF_Column::GetTopAsDbl, "Get Column top")
+        .def("GetColumnBottom", &PF_Column::GetBottomAsDbl, "Get Column bottom")
+        .def("GetColumnDirection", &PF_Column::GetDirection, "Get Column direction");
+
     py::class_<PF_Chart>(m, "PY_PF_Chart")
         .def(py::init())
         .def(py::init(
@@ -111,21 +121,39 @@ PYBIND11_MODULE(PY_PF_Chart, m)
                BoxScale boxscale) {
                 return PF_Chart{symbol, sv2dec(range_or_ATR), reversals, sv2dec(modifier), boxscale};
             }))
+        .def("__iter__", [](const PF_Chart &c) { return py::make_iterator(c.begin(), c.end()); },
+                         py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
+
         .def("MakeChartFromJSONFile", &PF_Chart::MakeChartFromJSONFile, "Construct a chart from saved PF_Chart data")
         .def("__str__", [](const PF_Chart& c) { return std::format("{}\n", c); })
+        .def("begin", [](const PF_Chart& c) { return c.begin(); })
+        .def("end", [](const PF_Chart& c) { return c.end(); })
         .def("empty", &PF_Chart::empty, "Is chart empty")
+        .def("HasReversedColumns", &PF_Chart::HasReversedColumns, "Are any Chart columns 'reversed'")
         .def(
             "GetBoxSize", [](const PF_Chart& a) { return a.GetChartBoxSize().format("f"); }, "Chart box size")
-        .def("GetReversals", &PF_Chart::GetReversalboxes, "How many revesal boxes")
+        .def("GetReversalBoxes", &PF_Chart::GetReversalboxes, "How many revesal boxes")
         .def("GetSymbol", &PF_Chart::GetSymbol)
         .def("GetCurrentDirection", &PF_Chart::GetCurrentDirection, "Chart is moving up/down/unknown")
+        .def("GetNumberOfColumns", &PF_Chart::size)
+        .def("GetLastChangeTimeSeconds", [](const PF_Chart& a) { return std::chrono::time_point_cast<std::chrono::seconds>(a.GetLastChangeTime()); })
+        .def("IsPercent", &PF_Chart::IsPercent)
+        .def("GetColumn", &PF_Chart::GetColumn, "Get chart column")
         .def("AddValue", py::overload_cast<std::string_view, std::string_view, std::string_view>(&PF_Chart::AddValue),
              "Add new value: new value, time, time format")
         .def("AddValue", py::overload_cast<double, int64_t>(&PF_Chart::AddValue),
              "Add new value: new value, time, time format")
+        .def("GetSignals", &PF_Chart::GetSignals)
         .def("GetMostRecentSignal", &PF_Chart::GetMostRecentSignal)
         .def("LoadDataFromFile", &PF_Chart::LoadDataFromFile)
         .def("GetBoxesForColumns", &PF_Chart::GetBoxesForColumns, py::return_value_policy::take_ownership);
+
+    py::class_<PF_Chart::PF_Chart_Iterator>(m, "PY_PF_Chart_Iterator")
+        .def(py::init())
+        .def(py::init(
+            [](const PF_Chart* chart, int32_t index) {
+                return PF_Chart::PF_Chart_Iterator{chart, index};
+            }));
 }
 
 // PF_Chart(std::string symbol, decimal::Decimal base_box_size, int32_t reversal_boxes,
