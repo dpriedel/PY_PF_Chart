@@ -124,7 +124,7 @@ PYBIND11_MODULE(PY_PF_Chart, m)
         .def("__iter__", [](const PF_Chart &c) { return py::make_iterator(c.begin(), c.end()); },
                          py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */)
 
-        .def("MakeChartFromJSONFile", &PF_Chart::MakeChartFromJSONFile, "Construct a chart from saved PF_Chart data")
+        .def("LoadChartFromJSONChartFile", &PF_Chart::LoadChartFromJSONChartFile, "Construct a chart from saved PF_Chart data")
         .def("__str__", [](const PF_Chart& c) { return std::format("{}\n", c); })
         .def("begin", [](const PF_Chart& c) { return c.begin(); })
         .def("end", [](const PF_Chart& c) { return c.end(); })
@@ -145,8 +145,9 @@ PYBIND11_MODULE(PY_PF_Chart, m)
              "Add new value: new value, time, time format")
         .def("GetSignals", &PF_Chart::GetSignals)
         .def("GetMostRecentSignal", &PF_Chart::GetMostRecentSignal)
-        .def("LoadDataFromFile", &PF_Chart::LoadDataFromFile)
-        .def("GetBoxesForColumns", &PF_Chart::GetBoxesForColumns, py::return_value_policy::take_ownership);
+        .def("BuildChartFromCSVFile", &PF_Chart::BuildChartFromCSVFile)
+        .def("GetBoxesForColumns", &PF_Chart::GetBoxesForColumns, py::return_value_policy::take_ownership)
+        .def("GetTopBottomForColumns", &PF_Chart::GetTopBottomForColumns, py::return_value_policy::take_ownership);
 
     py::class_<PF_Chart::PF_Chart_Iterator>(m, "PY_PF_Chart_Iterator")
         .def(py::init())
